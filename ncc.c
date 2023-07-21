@@ -1,9 +1,4 @@
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "ncc.h"
 
 typedef enum
 {
@@ -29,7 +24,7 @@ typedef enum
     ND_ADD, // +
     ND_SUB, // -
     ND_MUL, // *
-	ND_DIV, // /
+    ND_DIV, // /
     ND_EQ,  // ==
     ND_NEQ, // !=
     ND_GE,  // >=
@@ -211,7 +206,6 @@ Node *new_node_num(int val)
 // unary	= ( "+" | "-" )? primary
 // primary	= num | "(" expr ")"
 
-
 Node *expr();
 Node *equality();
 Node *relational();
@@ -288,8 +282,8 @@ Node *mul()
     {
         if (consume("*"))
             node = new_node(ND_MUL, node, unary());
-		else if (consume("/"))
-			node = new_node(ND_DIV, node, unary());
+        else if (consume("/"))
+            node = new_node(ND_DIV, node, unary());
         else
             return node;
     }
@@ -343,10 +337,10 @@ void gen(Node *node)
     case ND_MUL:
         printf("    imul rax, rdi\n");
         break;
-	case ND_DIV:
-		printf("    cqo\n");
-		printf("    idiv rdi\n");
-		break;
+    case ND_DIV:
+        printf("    cqo\n");
+        printf("    idiv rdi\n");
+        break;
     case ND_LE:
         printf("    cmp rax, rdi\n");
         printf("    setle al\n");
