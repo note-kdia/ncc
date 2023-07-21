@@ -7,7 +7,6 @@
 
 #include "ncc.h"
 
-static void error(char *fmt, ...);
 static Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 static bool is_startswith(char *p, char *q);
 
@@ -34,8 +33,14 @@ Token *tokenize() {
         }
 
         // Punctuator (Single letter)
-        if (strchr("+-*/()<>", *p)) {
+        if (strchr("+-*/()<>;=", *p)) {
             cur = new_token(TK_RESERVED, cur, p++, 1);
+            continue;
+        }
+
+        // Variables (a -> z)
+        if ('a' <= *p && *p <= 'z') {
+            cur = new_token(TK_IDENT, cur, p++, 1);
             continue;
         }
 
@@ -69,7 +74,7 @@ void error_at(char *loc, char *fmt, ...) {
 }
 
 // Reports an error and exit.
-static void error(char *fmt, ...) {
+void error(char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);

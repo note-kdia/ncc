@@ -14,18 +14,29 @@ int main(int argc, char **argv) {
 
     user_input = argv[1];
     token = tokenize();
-    Node *node = parse();
+    program();
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
     printf("main:\n");
 
-    // Traverse the AST to emit assembly.
-    gen(node);
+    // prologue
+    // Allocate stacks of 26(alphabets) variables
+    printf("    push rbp\n");
+    printf("    mov rbp, rsp\n");
+    printf("    sub rsp, 208\n");
 
-    // A result must be at the top of the stack, so pop it
-    // to RAX to make it a program exit code.
-    printf("    pop rax\n");
+    // Generate codes
+    for (int i = 0; code[i]; i++) {
+        gen(code[i]);
+
+        // be sure to pop
+        printf("    pop rax\n");
+    }
+
+    // Returns the result of last statement
+    printf("    mov rsp, rbp\n");
+    printf("    pop rbp\n");
     printf("    ret\n");
     return 0;
 }
