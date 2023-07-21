@@ -9,7 +9,7 @@
 
 static void error(char *fmt, ...);
 static Token *new_token(TokenKind kind, Token *cur, char *str, int len);
-static bool is_startwith(char *p, char *q);
+static bool is_startswith(char *p, char *q);
 
 // Tokenize `p` and returns new tokens.
 Token *tokenize() {
@@ -26,8 +26,8 @@ Token *tokenize() {
         }
 
         // Punctuator (Multi letter)
-        if (is_startwith(p, "==") || is_startwith(p, "!=") ||
-            is_startwith(p, "<=") || is_startwith(p, ">=")) {
+        if (is_startswith(p, "==") || is_startswith(p, "!=") ||
+            is_startswith(p, "<=") || is_startswith(p, ">=")) {
             cur = new_token(TK_RESERVED, cur, p, 2);
             p += 2;
             continue;
@@ -87,6 +87,6 @@ static Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
     return tok;
 }
 
-static bool is_startwith(char *p, char *q) {
+static bool is_startswith(char *p, char *q) {
     return memcmp(p, q, strlen(q)) == 0;
 }
