@@ -16,6 +16,9 @@ assert() {
     fi
 }
 
+True=1
+False=0
+
 assert 0 0
 assert 42 42
 assert 21 '5+20-4'
@@ -29,11 +32,14 @@ assert 18 '3 *(  2+4 )'
 assert 5 '70/(2+4*3)'
 assert 10 '-10+20'
 assert 15 '10/-2+20'
-assert 1 '2>1'
-assert 0 '-1 >= 5'
-assert 1 '211 == 211'
-assert 1 '211 == +211'
-assert 1 '5 > 4 == 1'
-assert 1 '5 != 0'
+assert $True '2>1'
+assert $False '1 >= 5'
+assert $True '211 == 211'
+assert $True '211 == +211'
+assert $True '5 != 0'
+assert $False '6 < -3'
+assert $True '5 > 4 == 1'
+assert $False '-10 >= 35'
+assert $True '-10 <= 35'
 
 echo OK
