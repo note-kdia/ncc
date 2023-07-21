@@ -29,5 +29,11 @@ assert 18 '3 *(  2+4 )'
 assert 5 '70/(2+4*3)'
 assert 10 '-10+20'
 assert 15 '10/-2+20'
+assert 1 '2>1'
+assert 0 '-1 >= 5'
+assert 1 '211 == 211'
+assert 1 '211 == +211'
+assert 1 '5 > 4 == 1'
+assert 1 '5 != 0'
 
 echo OK
