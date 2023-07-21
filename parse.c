@@ -30,16 +30,11 @@ static Node *unary();
 static Node *primary();
 
 // Parse tokens
-Node *parse()
-{
-    return expr();
-}
+Node *parse() { return expr(); }
 
 // Consumes the current token if it matches `op`.
-static bool consume(char *op)
-{
-    if (token->kind != TK_RESERVED ||
-        token->len != strlen(op) ||
+static bool consume(char *op) {
+    if (token->kind != TK_RESERVED || token->len != strlen(op) ||
         memcmp(token->str, op, token->len))
         return false;
     token = token->next;
@@ -47,20 +42,16 @@ static bool consume(char *op)
 }
 
 // Ensure that the current token is `op`.
-static void expect(char *op)
-{
-    if (token->kind != TK_RESERVED ||
-        token->len != strlen(op) ||
+static void expect(char *op) {
+    if (token->kind != TK_RESERVED || token->len != strlen(op) ||
         memcmp(token->str, op, token->len))
         error_at(token->str, "expected '%c'", op);
     token = token->next;
 }
 
 // Ensure that the current token is TK_NUM.
-static int expect_number()
-{
-    if (token->kind != TK_NUM)
-        error_at(token->str, "expected a number");
+static int expect_number() {
+    if (token->kind != TK_NUM) error_at(token->str, "expected a number");
     int val = token->val;
     token = token->next;
     return val;
@@ -69,8 +60,7 @@ static int expect_number()
 //
 // Parser
 //
-static Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
-{
+static Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = kind;
     node->lhs = lhs;
@@ -78,8 +68,7 @@ static Node *new_node(NodeKind kind, Node *lhs, Node *rhs)
     return node;
 }
 
-static Node *new_node_num(int val)
-{
+static Node *new_node_num(int val) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_NUM;
     node->val = val;
@@ -88,19 +77,16 @@ static Node *new_node_num(int val)
 
 // Syntax Rules
 // expr		= equality
-static Node *expr()
-{
+static Node *expr() {
     Node *node = equality();
     return node;
 }
 
 // equality	= relational ( "==" relational | "!=" relational )*
-static Node *equality()
-{
+static Node *equality() {
     Node *node = relational();
 
-    for (;;)
-    {
+    for (;;) {
         if (consume("=="))
             node = new_node(ND_EQ, node, relational());
         else if (consume("!="))
@@ -111,12 +97,10 @@ static Node *equality()
 }
 
 // relational	= add ( ">=" add | "<=" add | ">" add | "<" add )*
-static Node *relational()
-{
+static Node *relational() {
     Node *node = add();
 
-    for (;;)
-    {
+    for (;;) {
         if (consume(">="))
             node = new_node(ND_GE, node, add());
         else if (consume("<="))
@@ -131,12 +115,10 @@ static Node *relational()
 }
 
 // add		= mul ( "+" mul | "-" mul )*
-static Node *add()
-{
+static Node *add() {
     Node *node = mul();
 
-    for (;;)
-    {
+    for (;;) {
         if (consume("+"))
             node = new_node(ND_ADD, node, mul());
         else if (consume("-"))
@@ -147,12 +129,10 @@ static Node *add()
 }
 
 // mul		= unary ( "*" unary | "/" unary )*
-static Node *mul()
-{
+static Node *mul() {
     Node *node = unary();
 
-    for (;;)
-    {
+    for (;;) {
         if (consume("*"))
             node = new_node(ND_MUL, node, unary());
         else if (consume("/"))
@@ -163,20 +143,15 @@ static Node *mul()
 }
 
 // unary	= ( "+" | "-" )? primary
-static Node *unary()
-{
-    if (consume("+"))
-        return primary();
-    if (consume("-"))
-        return new_node(ND_SUB, new_node_num(0), primary());
+static Node *unary() {
+    if (consume("+")) return primary();
+    if (consume("-")) return new_node(ND_SUB, new_node_num(0), primary());
     return primary();
 }
 
 // primary	= num | "(" expr ")"
-static Node *primary()
-{
-    if (consume("("))
-    {
+static Node *primary() {
+    if (consume("(")) {
         Node *node = expr();
         expect(")");
         return node;

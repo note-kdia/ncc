@@ -3,13 +3,11 @@
 #include "ncc.h"
 
 // Global variables
-char *user_input; // Input program
-Token *token;     // Input program
+char *user_input;  // Input program
+Token *token;      // Input program
 
-int main(int argc, char **argv)
-{
-    if (argc != 2)
-    {
+int main(int argc, char **argv) {
+    if (argc != 2) {
         fprintf(stderr, "Give proper number of arguments\n");
         return 1;
     }
