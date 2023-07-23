@@ -15,6 +15,9 @@ static Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 static Node *new_node_lvar(int offset);
 static Node *new_node_num(int val);
 
+static LVar *find_lvar(Token *token);
+static LVar *create_lvar(Token *token);
+
 // Abstruct Syntax Tree
 // -------------------------------------------------------------------------
 // program  = statement*
@@ -142,7 +145,13 @@ static Node *primary() {
 
     Token *tok = consume_ident();
     if (tok) {
-        return new_node_lvar(tok->str[0] - 'a' + 1);
+        LVar *lvar = find_lvar(tok);
+        if (lvar) {  // If lvar exists
+            return new_node_lvar(lvar->offset);
+        } else {  // If lvar doesn't exist
+            lvar = create_lvar(tok);
+            return new_node_lvar(lvar->offset);
+        }
     }
 
     return new_node_num(expect_number());
@@ -156,10 +165,16 @@ static Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
     return node;
 }
 
-static Node *new_node_lvar(int offset_stacks) {
+/**
+ * @brief Creates new node of local variable.
+ *
+ * @param int offset : Offset from RBP in bytes.
+ * @return Node * : Returns new local varable node.
+ */
+static Node *new_node_lvar(int offset) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
-    node->offset_bytes = offset_stacks * 8;
+    node->offset = offset;
     return node;
 }
 
@@ -185,7 +200,7 @@ static bool consume(char *op) {
 }
 
 static Token *consume_ident() {
-    if (token->kind != TK_IDENT || token->len != 1) {
+    if (token->kind != TK_IDENT) {
         return false;
     }
     Token *tok = token;
@@ -207,4 +222,33 @@ static int expect_number() {
     int val = token->val;
     token = token->next;
     return val;
+}
+
+/**
+ * @brief Find and returns local variable<Token *> if it exists in LVar chain.
+ *
+ * @param token : The token you want to search for.
+ * @return LVar * : Matched LVar or NULL if it doesn't exists.
+ */
+static LVar *find_lvar(Token *token) {
+    for (LVar *var = locals; var; var = var->next)
+        if (var->len == token->len && !memcmp(token->str, var->name, var->len))
+            return var;
+    return NULL;
+}
+
+/**
+ * @brief Create new local variable and chain to locals.
+ *
+ * @param Token *token : Create local variable from this token.
+ * @return LVar * : Returns pointer of created LVar struct.
+ */
+static LVar *create_lvar(Token *token) {
+    LVar *lvar = calloc(1, sizeof(LVar));
+    lvar->next = locals;
+    lvar->name = token->str;
+    lvar->len = token->len;
+    lvar->offset = locals->offset + 8;
+    locals = lvar;
+    return lvar;
 }

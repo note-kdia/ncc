@@ -38,9 +38,17 @@ Token *tokenize() {
             continue;
         }
 
-        // Variables (a -> z)
-        if ('a' <= *p && *p <= 'z') {
-            cur = new_token(TK_IDENT, cur, p++, 1);
+        // Variables
+        // Allow a-zA-Z_ in first char
+        // Allow a-zA-Z_- in succeeding char
+        if ('a' <= *p && *p <= 'z' || 'A' <= *p && *p <= 'Z' || *p == '_') {
+            int len = 1;
+            while ('a' <= p[len] && p[len] <= 'z' ||
+                   'A' <= p[len] && p[len] <= 'Z' ||
+                   '0' <= p[len] && p[len] <= '9' || p[len] == '_')
+                len++;
+            cur = new_token(TK_IDENT, cur, p, len);
+            p += len;
             continue;
         }
 
@@ -51,7 +59,7 @@ Token *tokenize() {
             continue;
         }
 
-        error_at(p, "expected a number");
+        error_at(p, "tokenizer: Invalid Token");
     }
 
     // EOF

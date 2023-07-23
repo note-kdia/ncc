@@ -39,16 +39,27 @@ typedef struct Node Node;
 
 // Node type of Abstract Syntax
 struct Node {
-    NodeKind kind;     // Node kind
-    Node *lhs;         // left hand side
-    Node *rhs;         // right hand side
-    int val;           // If kind is ND_NUM, its value
-    int offset_bytes;  // If kind is ND_LVAR, its offset from rbp.
+    NodeKind kind;  // Node kind
+    Node *lhs;      // left hand side
+    Node *rhs;      // right hand side
+    int val;        // If kind is ND_NUM, its value
+    int offset;     // If kind is ND_LVAR, its offset from rbp.
+};
+
+typedef struct LVar LVar;
+
+// Type of local variable
+struct LVar {
+    LVar *next;  // Next variable of NULL
+    char *name;  // Name of the variable
+    int len;     // Length of the name
+    int offset;  // offset from RBP in bytes
 };
 
 // Global variables
 extern char *user_input;
 extern Token *token;
+extern LVar *locals;
 
 extern Node *code[100];
 

@@ -44,5 +44,8 @@ assert $True '-10 <= 35;'
 assert 10 '1+2;1+8;5+5;'
 assert 8 'a=5;b=3;a+b;'
 assert 16 'a=5 ;b=3;-a+b*7;'
+assert 9 'foo=7;bar=2;foo+bar;'
+assert 10 'var1=7;var2=3;var1+var2;'
+assert 11 'var_=7;var=4;var_+var;'
 
 echo OK

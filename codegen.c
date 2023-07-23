@@ -6,7 +6,7 @@ void gen_lval(Node *node) {
     if (node->kind != ND_LVAR) error("Left-side value is not variable.");
 
     printf("    mov rax, rbp\n");
-    printf("    sub rax, %d\n", node->offset_bytes);
+    printf("    sub rax, %d\n", node->offset);
     printf("    push rax\n");
 }
 

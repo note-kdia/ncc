@@ -1,16 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ncc.h"
 
 // Global variables
 char *user_input;  // Input program
 Token *token;      // Input program
+LVar *locals;      // local variables
 
 int main(int argc, char **argv) {
     if (argc != 2) {
         fprintf(stderr, "Give proper number of arguments\n");
         return 1;
     }
+
+    // Initialize locals<LVar *>
+    locals = calloc(1, sizeof(LVar));
 
     user_input = argv[1];
     token = tokenize();
