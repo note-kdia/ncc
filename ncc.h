@@ -5,6 +5,7 @@ typedef enum {
     TK_RESERVED,  // Keywords or punctuator
     TK_IDENT,     // Identifier
     TK_NUM,       // Integer literals
+    TK_RETURN,    // Return
     TK_EOF,       // End-of-File markers
 } TokenKind;
 
@@ -33,6 +34,7 @@ typedef enum {
     ND_ASSIGN,  // assign
     ND_NUM,     // integer
     ND_LVAR,    // local vaiables
+    ND_RETURN,  // return
 } NodeKind;
 
 typedef struct Node Node;
@@ -50,7 +52,7 @@ typedef struct LVar LVar;
 
 // Type of local variable
 struct LVar {
-    LVar *next;  // Next variable of NULL
+    LVar *next;  // Next variable or NULL
     char *name;  // Name of the variable
     int len;     // Length of the name
     int offset;  // offset from RBP in bytes

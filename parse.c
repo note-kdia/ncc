@@ -6,6 +6,7 @@
 #include "ncc.h"
 
 static bool consume(char *op);
+static bool consume_return();
 static Token *consume_ident();
 static void expect(char *op);
 static int expect_number();
@@ -21,7 +22,7 @@ static LVar *create_lvar(Token *token);
 // Abstruct Syntax Tree
 // -------------------------------------------------------------------------
 // program  = statement*
-// statement= expr ";"
+// statement= expr ";" | "return" expr ";"
 // expr		= assign
 // assign   = equality ( "=" assign )?
 // equality	= relational ( "==" relational | "!=" relational )*
@@ -53,8 +54,18 @@ void program() {
 
 // statement= expr ";"
 static Node *statement() {
-    Node *node = expr();
+    Node *node;
+
+    if (consume_return()) {
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_RETURN;
+        node->lhs = expr();
+    } else {
+        node = expr();
+    }
+
     expect(";");
+
     return node;
 }
 
@@ -195,6 +206,14 @@ static bool consume(char *op) {
     if (token->kind != TK_RESERVED || token->len != strlen(op) ||
         memcmp(token->str, op, token->len))
         return false;
+    token = token->next;
+    return true;
+}
+
+static bool consume_return() {
+    if (token->kind != TK_RETURN) {
+        return false;
+    }
     token = token->next;
     return true;
 }

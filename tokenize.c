@@ -10,6 +10,11 @@
 static Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 static bool is_startswith(char *p, char *q);
 
+static bool is_alphabet(char c);
+static bool is_number(char c);
+static bool is_underscore(char c);
+static bool is_alnumunderscore(char c);
+
 // Tokenize `p` and returns new tokens.
 Token *tokenize() {
     char *p = user_input;
@@ -38,14 +43,19 @@ Token *tokenize() {
             continue;
         }
 
+        if (strncmp(p, "return", 6) == 0 && !is_alnumunderscore(p[6])) {
+            cur = new_token(TK_RETURN, cur, p, 6);
+            p += 6;
+            continue;
+        }
+
         // Variables
         // Allow a-zA-Z_ in first char
         // Allow a-zA-Z_- in succeeding char
-        if ('a' <= *p && *p <= 'z' || 'A' <= *p && *p <= 'Z' || *p == '_') {
+        if (is_alphabet(*p) || is_underscore(*p)) {
             int len = 1;
-            while ('a' <= p[len] && p[len] <= 'z' ||
-                   'A' <= p[len] && p[len] <= 'Z' ||
-                   '0' <= p[len] && p[len] <= '9' || p[len] == '_')
+            while (is_alphabet(p[len]) || is_number(p[len]) ||
+                   is_underscore(p[len]))
                 len++;
             cur = new_token(TK_IDENT, cur, p, len);
             p += len;
@@ -102,4 +112,16 @@ static Token *new_token(TokenKind kind, Token *cur, char *str, int len) {
 
 static bool is_startswith(char *p, char *q) {
     return memcmp(p, q, strlen(q)) == 0;
+}
+
+static bool is_alphabet(char c) {
+    return ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z');
+}
+
+static bool is_number(char c) { return ('0' <= c && c <= '9'); }
+
+static bool is_underscore(char c) { return (c == '_'); }
+
+static bool is_alnumunderscore(char c) {
+    return (is_alphabet(c) || is_number(c) || is_underscore(c));
 }

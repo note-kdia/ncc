@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
     printf("main:\n");
 
     // prologue
-    // Allocate stacks of 26(alphabets) variables
+    // Allocate some stacks for local variable
     printf("    push rbp\n");
     printf("    mov rbp, rsp\n");
-    printf("    sub rsp, 208\n");
+    printf("    sub rsp, %d\n", locals->offset);
 
     // Generate codes
     for (int i = 0; code[i]; i++) {
