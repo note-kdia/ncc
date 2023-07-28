@@ -6,6 +6,7 @@ typedef enum {
     TK_IDENT,     // Identifier
     TK_NUM,       // Integer literals
     TK_RETURN,    // Return
+    TK_IF,        // If
     TK_EOF,       // End-of-File markers
 } TokenKind;
 
@@ -35,6 +36,7 @@ typedef enum {
     ND_NUM,     // integer
     ND_LVAR,    // local vaiables
     ND_RETURN,  // return
+    ND_IF,      // if
 } NodeKind;
 
 typedef struct Node Node;
@@ -62,6 +64,7 @@ struct LVar {
 extern char *user_input;
 extern Token *token;
 extern LVar *locals;
+extern int jmp_label;
 
 extern Node *code[100];
 

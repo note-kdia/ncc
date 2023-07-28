@@ -49,5 +49,7 @@ assert 10 'var1=7;var2=3;var1+var2;'
 assert 11 'var_=7;var=4;var_+var;'
 assert 0 'return 0;return 1;'
 assert 10 'foo=9; bar=1; return foo+bar;'
+assert 1 'if (1==1) return 1; return 0;'
+assert 0 'if (1!=1) return 1; return 0;'
 
 echo OK

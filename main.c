@@ -7,6 +7,7 @@
 char *user_input;  // Input program
 Token *token;      // Input program
 LVar *locals;      // local variables
+int jmp_label = 0; // unique label for jmp
 
 int main(int argc, char **argv) {
     if (argc != 2) {

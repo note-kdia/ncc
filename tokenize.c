@@ -49,6 +49,12 @@ Token *tokenize() {
             continue;
         }
 
+        if (strncmp(p, "if", 2) == 0 && !is_alnumunderscore(p[2])) {
+            cur = new_token(TK_IF, cur, p, 2);
+            p += 2;
+            continue;
+        }
+
         // Variables
         // Allow a-zA-Z_ in first char
         // Allow a-zA-Z_- in succeeding char

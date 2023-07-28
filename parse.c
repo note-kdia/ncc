@@ -7,6 +7,7 @@
 
 static bool consume(char *op);
 static bool consume_return();
+static bool consume_if();
 static Token *consume_ident();
 static void expect(char *op);
 static int expect_number();
@@ -21,8 +22,10 @@ static LVar *create_lvar(Token *token);
 
 // Abstruct Syntax Tree
 // -------------------------------------------------------------------------
-// program  = statement*
-// statement= expr ";" | "return" expr ";"
+// program  = stmt*
+// stmt     = expr ";"
+//          | "if" "(" expr ")" stmt
+//          | "return" expr ";"
 // expr		= assign
 // assign   = equality ( "=" assign )?
 // equality	= relational ( "==" relational | "!=" relational )*
@@ -32,7 +35,7 @@ static LVar *create_lvar(Token *token);
 // unary	= ( "+" | "-" )? primary
 // primary	= num | ident | "(" expr ")"
 // -------------------------------------------------------------------------
-static Node *statement();
+static Node *stmt();
 static Node *expr();
 static Node *assign();
 static Node *equality();
@@ -45,26 +48,36 @@ static Node *primary();
 Node *code[100];
 
 // Syntax Rules
-// program  = statement*
+// program  = stmt*
 void program() {
     int i = 0;
-    while (!is_at_eof()) code[i++] = statement();
+    while (!is_at_eof()) code[i++] = stmt();
     code[i] = NULL;
 }
 
-// statement= expr ";"
-static Node *statement() {
+// stmt     = expr ";"
+//          | "if" "(" expr ")" stmt
+//          | "return" expr ";"
+static Node *stmt() {
     Node *node;
 
     if (consume_return()) {
         node = calloc(1, sizeof(Node));
         node->kind = ND_RETURN;
         node->lhs = expr();
+        expect(";");
+    } else if(consume_if()) {
+        consume("(");
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_IF;
+        node->lhs = expr();
+        expect(")");
+        node->rhs = stmt();
     } else {
         node = expr();
+        expect(";");
     }
 
-    expect(";");
 
     return node;
 }
@@ -212,6 +225,14 @@ static bool consume(char *op) {
 
 static bool consume_return() {
     if (token->kind != TK_RETURN) {
+        return false;
+    }
+    token = token->next;
+    return true;
+}
+
+static bool consume_if() {
+    if (token->kind != TK_IF) {
         return false;
     }
     token = token->next;
