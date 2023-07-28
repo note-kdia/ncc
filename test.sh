@@ -51,5 +51,7 @@ assert 0 'return 0;return 1;'
 assert 10 'foo=9; bar=1; return foo+bar;'
 assert 1 'if (1==1) return 1; return 0;'
 assert 0 'if (1!=1) return 1; return 0;'
+assert 1 'if (1==1) if (2==2) return 1; return 0;'
+assert 0 'if (1==1) if (2!=2) return 1; return 0;'
 
 echo OK
